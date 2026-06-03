@@ -40,7 +40,7 @@ public class EmployeeEntity {
     @JoinColumn(name = "department_id")
     private DepartmentEntity department;
 
-    @Column(updatable = false, insertable = false)
+    @Column(updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

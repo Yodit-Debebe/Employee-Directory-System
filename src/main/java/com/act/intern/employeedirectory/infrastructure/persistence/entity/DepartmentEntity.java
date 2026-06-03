@@ -23,6 +23,7 @@ public class DepartmentEntity {
     @Column(length = 500)
     private String description;
 
-    @Column(updatable = false, insertable = false)
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 }

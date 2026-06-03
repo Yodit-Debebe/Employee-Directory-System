@@ -1,4 +1,4 @@
-package com.act.intern.employeedirectory.exception;
+package com.act.intern.employeedirectory.adapter.web.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.act.intern.employeedirectory.exception;
+package com.act.intern.employeedirectory.domain.exception;
 
 public class DuplicateResourceException extends RuntimeException {
 

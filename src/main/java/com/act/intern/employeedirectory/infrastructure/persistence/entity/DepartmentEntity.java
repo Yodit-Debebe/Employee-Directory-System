@@ -1,4 +1,4 @@
-package com.act.intern.employeedirectory.domain;
+package com.act.intern.employeedirectory.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Department {
+public class DepartmentEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

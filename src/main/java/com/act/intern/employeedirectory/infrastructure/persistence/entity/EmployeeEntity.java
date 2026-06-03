@@ -1,11 +1,12 @@
-package com.act.intern.employeedirectory.domain;
+package com.act.intern.employeedirectory.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "employees")
@@ -14,7 +15,7 @@ import java.time.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Employee {
+public class EmployeeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,11 +37,10 @@ public class Employee {
     private LocalDate hireDate;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
-    private Department department;
+    @JoinColumn(name = "department_id")
+    private DepartmentEntity department;
 
     @Column(updatable = false, insertable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
-
 }

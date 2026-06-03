@@ -1,5 +1,7 @@
-package com.act.intern.employeedirectory.exception;
+package com.act.intern.employeedirectory.adapter.web.exception;
 
+import com.act.intern.employeedirectory.domain.exception.DuplicateResourceException;
+import com.act.intern.employeedirectory.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

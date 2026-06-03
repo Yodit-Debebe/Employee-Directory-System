@@ -1,8 +1,8 @@
-package com.act.intern.employeedirectory.controller;
+package com.act.intern.employeedirectory.adapter.web.controller;
 
-import com.act.intern.employeedirectory.domain.Employee;
-import com.act.intern.employeedirectory.dto.EmployeeRequest;
-import com.act.intern.employeedirectory.service.EmployeeService;
+import com.act.intern.employeedirectory.application.port.input.EmployeeUseCase;
+import com.act.intern.employeedirectory.domain.model.Employee;
+import com.act.intern.employeedirectory.adapter.web.dto.EmployeeRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 @RequestMapping("/employees")
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
+    private final EmployeeUseCase employeeUseCase;
 
-    public EmployeeController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+    public EmployeeController(EmployeeUseCase employeeUseCase) {
+        this.employeeUseCase = employeeUseCase;
     }
 
     @PostMapping
@@ -25,7 +25,7 @@ public class EmployeeController {
             @Valid @RequestBody EmployeeRequest request) {
 
         return new ResponseEntity<>(
-                employeeService.createEmployee(request),
+                employeeUseCase.createEmployee(request),
                 HttpStatus.CREATED
         );
     }
@@ -43,7 +43,7 @@ public class EmployeeController {
         if (departmentId != null) {
 
             return ResponseEntity.ok(
-                    employeeService.getEmployeesByDepartment(
+                    employeeUseCase.getEmployeesByDepartment(
                             departmentId,
                             page,
                             size
@@ -52,7 +52,7 @@ public class EmployeeController {
         }
 
         return ResponseEntity.ok(
-                employeeService.getAllEmployees(page, size)
+                employeeUseCase.getAllEmployees(page, size)
         );
     }
 
@@ -60,7 +60,7 @@ public class EmployeeController {
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
 
         return ResponseEntity.ok(
-                employeeService.getEmployeeById(id)
+                employeeUseCase.getEmployeeById(id)
         );
     }
 
@@ -70,14 +70,14 @@ public class EmployeeController {
             @Valid @RequestBody EmployeeRequest request) {
 
         return ResponseEntity.ok(
-                employeeService.updateEmployee(id, request)
+                employeeUseCase.updateEmployee(id, request)
         );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
 
-        employeeService.deleteEmployee(id);
+        employeeUseCase.deleteEmployee(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -93,7 +93,7 @@ public class EmployeeController {
     ) {
 
         return ResponseEntity.ok(
-                employeeService.searchEmployees(
+                employeeUseCase.searchEmployees(
                         keyword,
                         page,
                         size
@@ -115,7 +115,7 @@ public class EmployeeController {
 
         return ResponseEntity.ok(
 
-                employeeService.filterEmployeesBySalary(
+                employeeUseCase.filterEmployeesBySalary(
                         minSalary,
                         maxSalary,
                         page,

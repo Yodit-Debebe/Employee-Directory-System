@@ -1,4 +1,4 @@
-package com.act.intern.employeedirectory.dto;
+package com.act.intern.employeedirectory.adapter.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

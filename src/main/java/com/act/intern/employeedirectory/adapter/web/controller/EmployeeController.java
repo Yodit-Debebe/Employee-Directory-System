@@ -1,5 +1,7 @@
 package com.act.intern.employeedirectory.adapter.web.controller;
 
+import com.act.intern.employeedirectory.application.command.CreateEmployeeCommand;
+import com.act.intern.employeedirectory.application.command.UpdateEmployeeCommand;
 import com.act.intern.employeedirectory.application.port.input.EmployeeUseCase;
 import com.act.intern.employeedirectory.domain.model.Employee;
 import com.act.intern.employeedirectory.adapter.web.dto.EmployeeRequest;
@@ -24,9 +26,37 @@ public class EmployeeController {
     public ResponseEntity<Employee> createEmployee(
             @Valid @RequestBody EmployeeRequest request) {
 
-        return new ResponseEntity<>(
-                employeeUseCase.createEmployee(request),
-                HttpStatus.CREATED
+        CreateEmployeeCommand command =
+                new CreateEmployeeCommand(
+                        request.getFirstName(),
+                        request.getLastName(),
+                        request.getEmail(),
+                        request.getSalary(),
+                        request.getHireDate(),
+                        request.getDepartmentId()
+                );
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(employeeUseCase.createEmployee(command));
+    };
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(
+            @PathVariable Long id,
+            @Valid @RequestBody EmployeeRequest request) {
+
+        UpdateEmployeeCommand command =
+                new UpdateEmployeeCommand(
+                        request.getFirstName(),
+                        request.getLastName(),
+                        request.getEmail(),
+                        request.getSalary(),
+                        request.getHireDate(),
+                        request.getDepartmentId()
+                );
+
+        return ResponseEntity.ok(
+                employeeUseCase.updateEmployee(id, command)
         );
     }
 
@@ -61,16 +91,6 @@ public class EmployeeController {
 
         return ResponseEntity.ok(
                 employeeUseCase.getEmployeeById(id)
-        );
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(
-            @PathVariable Long id,
-            @Valid @RequestBody EmployeeRequest request) {
-
-        return ResponseEntity.ok(
-                employeeUseCase.updateEmployee(id, request)
         );
     }
 

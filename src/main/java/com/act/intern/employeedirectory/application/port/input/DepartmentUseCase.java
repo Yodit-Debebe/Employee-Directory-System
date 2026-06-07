@@ -1,15 +1,17 @@
 package com.act.intern.employeedirectory.application.port.input;
 
 import com.act.intern.employeedirectory.adapter.web.dto.DepartmentRequest;
+import com.act.intern.employeedirectory.application.command.CreateDepartmentCommand;
+import com.act.intern.employeedirectory.application.command.UpdateDepartmentCommand;
 import com.act.intern.employeedirectory.domain.model.Department;
 
 import java.util.List;
 
 public interface DepartmentUseCase {
 
-    Department createDepartment(DepartmentRequest request);
+    Department createDepartment(CreateDepartmentCommand command);
 
-    Department updateDepartment(Long id, DepartmentRequest request);
+    Department updateDepartment(Long id, UpdateDepartmentCommand command);
 
     Department getDepartmentById(Long id);
 

@@ -1,6 +1,7 @@
 package com.act.intern.employeedirectory.application.service;
 
-import com.act.intern.employeedirectory.adapter.web.dto.DepartmentRequest;
+import com.act.intern.employeedirectory.application.command.CreateDepartmentCommand;
+import com.act.intern.employeedirectory.application.command.UpdateDepartmentCommand;
 import com.act.intern.employeedirectory.application.port.input.DepartmentUseCase;
 import com.act.intern.employeedirectory.application.port.output.DepartmentRepositoryPort;
 import com.act.intern.employeedirectory.domain.exception.DuplicateResourceException;
@@ -25,6 +26,43 @@ public class DepartmentApplicationService
     }
 
     @Override
+    public Department createDepartment(
+            CreateDepartmentCommand command) {
+
+        if (departmentRepositoryPort.existsByName(
+                command.name())) {
+
+            throw new DuplicateResourceException(
+                    "Department name already exists"
+            );
+        }
+
+        Department department = Department.builder()
+                .name(command.name())
+                .description(command.description())
+                .build();
+
+        return departmentRepositoryPort.save(department);
+    }
+
+    @Override
+    public Department updateDepartment(
+            Long id,
+            UpdateDepartmentCommand command) {
+
+        Department department =
+                getDepartmentById(id);
+
+        department = Department.builder()
+                .id(department.getId())
+                .name(command.name())
+                .description(command.description())
+                .build();
+
+        return departmentRepositoryPort.save(department);
+    }
+
+    @Override
     public List<Department> getAllDepartments() {
 
         return departmentRepositoryPort.findAll();
@@ -39,43 +77,6 @@ public class DepartmentApplicationService
                                 "Department not found"
                         )
                 );
-    }
-
-    @Override
-    public Department createDepartment(
-            DepartmentRequest request) {
-
-        if (departmentRepositoryPort.existsByName(
-                request.getName())) {
-
-            throw new DuplicateResourceException(
-                    "Department name already exists"
-            );
-        }
-
-        Department department = Department.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .build();
-
-        return departmentRepositoryPort.save(department);
-    }
-
-    @Override
-    public Department updateDepartment(
-            Long id,
-            DepartmentRequest request) {
-
-        Department department =
-                getDepartmentById(id);
-
-        department = Department.builder()
-                .id(department.getId())
-                .name(request.getName())
-                .description(request.getDescription())
-                .build();
-
-        return departmentRepositoryPort.save(department);
     }
 
     @Override

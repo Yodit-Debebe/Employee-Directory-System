@@ -1,6 +1,7 @@
 package com.act.intern.employeedirectory.application.service;
 
-import com.act.intern.employeedirectory.adapter.web.dto.EmployeeRequest;
+import com.act.intern.employeedirectory.application.command.CreateEmployeeCommand;
+import com.act.intern.employeedirectory.application.command.UpdateEmployeeCommand;
 import com.act.intern.employeedirectory.application.port.input.EmployeeUseCase;
 import com.act.intern.employeedirectory.application.port.output.DepartmentRepositoryPort;
 import com.act.intern.employeedirectory.application.port.output.EmployeeRepositoryPort;
@@ -33,9 +34,9 @@ public class EmployeeApplicationService
     }
 
     @Override
-    public Employee createEmployee(EmployeeRequest request) {
+    public Employee createEmployee(CreateEmployeeCommand command) {
 
-        if (employeeRepositoryPort.existsByEmail(request.getEmail())) {
+        if (employeeRepositoryPort.existsByEmail(command.email())) {
             throw new DuplicateResourceException(
                     "Email already exists"
             );
@@ -43,19 +44,49 @@ public class EmployeeApplicationService
 
         Department department =
                 departmentRepositoryPort.findById(
-                        request.getDepartmentId()
+                        command.departmentId()
                 ).orElseThrow(
                         () -> new ResourceNotFoundException(
                                 "Department not found"
                         )
                 );
 
-        Employee employee = Employee.builder()           //converting a request object (DTO) into a Domain object (Employee)
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .salary(request.getSalary())
-                .hireDate(request.getHireDate())
+        Employee employee = Employee.builder()
+                .firstName(command.firstName())
+                .lastName(command.lastName())
+                .email(command.email())
+                .salary(command.salary())
+                .hireDate(command.hireDate())
+                .department(department)
+                .build();
+
+        return employeeRepositoryPort.save(employee);
+    }
+
+    @Override
+    public Employee updateEmployee(
+            Long id,
+            UpdateEmployeeCommand command) {
+
+        Employee employee =
+                getEmployeeById(id);
+
+        Department department =
+                departmentRepositoryPort.findById(
+                        command.departmentId()
+                ).orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                "Department not found"
+                        )
+                );
+
+        employee = Employee.builder()
+                .id(employee.getId())
+                .firstName(command.firstName())
+                .lastName(command.lastName())
+                .email(command.email())
+                .salary(command.salary())
+                .hireDate(command.hireDate())
                 .department(department)
                 .build();
 
@@ -131,36 +162,6 @@ public class EmployeeApplicationService
                 maxSalary,
                 pageable
         );
-    }
-
-    @Override
-    public Employee updateEmployee(
-            Long id,
-            EmployeeRequest request) {
-
-        Employee employee =
-                getEmployeeById(id);
-
-        Department department =
-                departmentRepositoryPort.findById(
-                        request.getDepartmentId()
-                ).orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "Department not found"
-                        )
-                );
-
-        employee = Employee.builder()
-                .id(employee.getId())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .salary(request.getSalary())
-                .hireDate(request.getHireDate())
-                .department(department)
-                .build();
-
-        return employeeRepositoryPort.save(employee);
     }
 
     @Override

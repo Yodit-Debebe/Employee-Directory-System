@@ -1,8 +1,10 @@
 package com.act.intern.employeedirectory.adapter.web.controller;
 
+import com.act.intern.employeedirectory.adapter.web.dto.DepartmentRequest;
+import com.act.intern.employeedirectory.application.command.CreateDepartmentCommand;
+import com.act.intern.employeedirectory.application.command.UpdateDepartmentCommand;
 import com.act.intern.employeedirectory.application.port.input.DepartmentUseCase;
 import com.act.intern.employeedirectory.domain.model.Department;
-import com.act.intern.employeedirectory.adapter.web.dto.DepartmentRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +23,33 @@ public class DepartmentController {
 
     @PostMapping
     public ResponseEntity<Department> createDepartment(
-            @Valid @RequestBody DepartmentRequest request) {    // @RequestBody - Converts JSON body into Java object
+            @Valid @RequestBody DepartmentRequest request) {
+
+        CreateDepartmentCommand command =
+                new CreateDepartmentCommand(
+                        request.getName(),
+                        request.getDescription()
+                );
 
         return new ResponseEntity<>(
-                departmentUseCase.createDepartment(request),
+                departmentUseCase.createDepartment(command),
                 HttpStatus.CREATED
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Department> updateDepartment(
+            @PathVariable Long id,
+            @Valid @RequestBody DepartmentRequest request) {
+
+        UpdateDepartmentCommand command =
+                new UpdateDepartmentCommand(
+                        request.getName(),
+                        request.getDescription()
+                );
+
+        return ResponseEntity.ok(
+                departmentUseCase.updateDepartment(id, command)
         );
     }
 
@@ -42,16 +66,6 @@ public class DepartmentController {
 
         return ResponseEntity.ok(
                 departmentUseCase.getDepartmentById(id)
-        );
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Department> updateDepartment(
-            @PathVariable Long id,
-            @Valid @RequestBody DepartmentRequest request) {
-
-        return ResponseEntity.ok(
-                departmentUseCase.updateDepartment(id, request)
         );
     }
 

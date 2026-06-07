@@ -1,6 +1,7 @@
 package com.act.intern.employeedirectory.application.port.input;
 
-import com.act.intern.employeedirectory.adapter.web.dto.EmployeeRequest;
+import com.act.intern.employeedirectory.application.command.CreateEmployeeCommand;
+import com.act.intern.employeedirectory.application.command.UpdateEmployeeCommand;
 import com.act.intern.employeedirectory.domain.model.Employee;
 import org.springframework.data.domain.Page;
 
@@ -8,9 +9,14 @@ import java.math.BigDecimal;
 
 public interface EmployeeUseCase {
 
-    Employee createEmployee(EmployeeRequest request);
+    Employee createEmployee(
+            CreateEmployeeCommand command
+    );
 
-    Employee updateEmployee(Long id, EmployeeRequest request);
+    Employee updateEmployee(
+            Long id,
+            UpdateEmployeeCommand command
+    );
 
     Employee getEmployeeById(Long id);
 

@@ -1,5 +1,7 @@
 package com.act.intern.employeedirectory.adapter.web.controller;
 
+import com.act.intern.employeedirectory.adapter.web.dto.EmployeeResponse;
+import com.act.intern.employeedirectory.adapter.web.mapper.EmployeeResponseMapper;
 import com.act.intern.employeedirectory.application.command.CreateEmployeeCommand;
 import com.act.intern.employeedirectory.application.command.UpdateEmployeeCommand;
 import com.act.intern.employeedirectory.application.port.input.EmployeeUseCase;
@@ -23,7 +25,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(
+    public ResponseEntity<EmployeeResponse> createEmployee(
             @Valid @RequestBody EmployeeRequest request) {
 
         CreateEmployeeCommand command =
@@ -37,11 +39,16 @@ public class EmployeeController {
                 );
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(employeeUseCase.createEmployee(command));
-    };
+                .body(
+                        EmployeeResponseMapper.toResponse(
+                                employeeUseCase.createEmployee(command)
+                        )
+
+                );
+    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(
+    public ResponseEntity<EmployeeResponse> updateEmployee(
             @PathVariable Long id,
             @Valid @RequestBody EmployeeRequest request) {
 
@@ -56,12 +63,14 @@ public class EmployeeController {
                 );
 
         return ResponseEntity.ok(
+                EmployeeResponseMapper.toResponse(
                 employeeUseCase.updateEmployee(id, command)
+                )
         );
     }
 
     @GetMapping
-    public ResponseEntity<Page<Employee>> getEmployees(
+    public ResponseEntity<Page<EmployeeResponse>> getEmployees(
 
             @RequestParam(required = false) Long departmentId,
 
@@ -78,19 +87,25 @@ public class EmployeeController {
                             page,
                             size
                     )
+                            .map(EmployeeResponseMapper::toResponse)
+
             );
         }
 
         return ResponseEntity.ok(
-                employeeUseCase.getAllEmployees(page, size)
+                employeeUseCase
+                        .getAllEmployees(page, size)
+                        .map(EmployeeResponseMapper::toResponse)
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
 
         return ResponseEntity.ok(
+                EmployeeResponseMapper.toResponse(
                 employeeUseCase.getEmployeeById(id)
+                )
         );
     }
 
@@ -122,7 +137,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/filter/salary")
-    public ResponseEntity<Page<Employee>> filterEmployeesBySalary(
+    public ResponseEntity<Page<EmployeeResponse>> filterEmployeesBySalary(
 
             @RequestParam BigDecimal minSalary,
 
@@ -141,6 +156,7 @@ public class EmployeeController {
                         page,
                         size
                 )
+                        .map(EmployeeResponseMapper::toResponse)
         );
     }
 }

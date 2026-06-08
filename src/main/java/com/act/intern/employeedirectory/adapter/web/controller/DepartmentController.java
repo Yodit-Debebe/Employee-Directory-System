@@ -1,6 +1,8 @@
 package com.act.intern.employeedirectory.adapter.web.controller;
 
 import com.act.intern.employeedirectory.adapter.web.dto.DepartmentRequest;
+import com.act.intern.employeedirectory.adapter.web.dto.DepartmentResponse;
+import com.act.intern.employeedirectory.adapter.web.mapper.DepartmentResponseMapper;
 import com.act.intern.employeedirectory.application.command.CreateDepartmentCommand;
 import com.act.intern.employeedirectory.application.command.UpdateDepartmentCommand;
 import com.act.intern.employeedirectory.application.port.input.DepartmentUseCase;
@@ -22,7 +24,7 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Department> createDepartment(
+    public ResponseEntity<DepartmentResponse> createDepartment(
             @Valid @RequestBody DepartmentRequest request) {
 
         CreateDepartmentCommand command =
@@ -31,14 +33,18 @@ public class DepartmentController {
                         request.getDescription()
                 );
 
-        return new ResponseEntity<>(
-                departmentUseCase.createDepartment(command),
-                HttpStatus.CREATED
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(
+                        DepartmentResponseMapper.toResponse(
+                                departmentUseCase.createDepartment(
+                                        command
+                                )
+                        )
+                );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Department> updateDepartment(
+    public ResponseEntity<DepartmentResponse> updateDepartment(
             @PathVariable Long id,
             @Valid @RequestBody DepartmentRequest request) {
 
@@ -49,23 +55,31 @@ public class DepartmentController {
                 );
 
         return ResponseEntity.ok(
+                DepartmentResponseMapper.toResponse(
                 departmentUseCase.updateDepartment(id, command)
+                )
         );
     }
 
     @GetMapping
-    public ResponseEntity<List<Department>> getAllDepartments() {
+    public ResponseEntity<List<DepartmentResponse>> getAllDepartments() {
 
         return ResponseEntity.ok(
-                departmentUseCase.getAllDepartments()
+                departmentUseCase
+                        .getAllDepartments()
+                        .stream()
+                        .map(DepartmentResponseMapper::toResponse)
+                        .toList()
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Department> getDepartmentById(@PathVariable Long id) {
+    public ResponseEntity<DepartmentResponse> getDepartmentById(@PathVariable Long id) {
 
         return ResponseEntity.ok(
+                DepartmentResponseMapper.toResponse(
                 departmentUseCase.getDepartmentById(id)
+                )
         );
     }
 
